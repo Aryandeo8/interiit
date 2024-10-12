@@ -42,7 +42,7 @@ app.get("/option", (req, res) => {
     }
 });
 app.get(
-    "/google",
+    "auth/google",
     passport.authenticate("google", {
       scope: ["profile","email"],
     })

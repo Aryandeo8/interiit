@@ -7,7 +7,7 @@ import session from "express-session";
 import env from "dotenv";
 
 const app = express();
-const port = process.env.PORT;
+const port = 3000;
 env.config();
 app.use(
     session({
@@ -64,7 +64,7 @@ passport.use(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://interiit-cwy6.onrender.com/auth/google/option",
+        callbackURL: "/auth/google/option",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
       },
       async (accessToken, refreshToken, profile, cb) => {

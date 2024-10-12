@@ -31,10 +31,10 @@ const db = new pg.Client({
   });
 db.connect();
 
-app.get("https://turmino.onrender.com/", (req, res) => {
+app.get("/", (req, res) => {
   res.render("index.ejs");
 });
-app.get("https://turmino.onrender.com/option", (req, res) => {
+app.get("/option", (req, res) => {
     if (req.isAuthenticated()) {
       res.render("option.ejs");
     } else {
@@ -42,20 +42,20 @@ app.get("https://turmino.onrender.com/option", (req, res) => {
     }
 });
 app.get(
-    "https://turmino.onrender.com/auth/google",
+    "/google",
     passport.authenticate("google", {
       scope: ["profile","email"],
     })
 );
 
 app.get(
-    "https://turmino.onrender.com/auth/google/option",
+    "/auth/google/option",
     passport.authenticate("google", {
       successRedirect: "/option",
       failureRedirect: "/",
     })
 );
-app.get("https://turmino.onrender.com/portal", (req, res) => {
+app.get("/portal", (req, res) => {
     res.render("portal.ejs");
 });
 passport.use(
@@ -64,7 +64,7 @@ passport.use(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://turmino.onrender.com/auth/google/option",
+        callbackURL: "${port}/auth/google/option",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
       },
       async (accessToken, refreshToken, profile, cb) => {

@@ -1,0 +1,25 @@
+body{
+    background-color: #212529;
+}
+.projectitem{
+    margin-top: 10px;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+img{
+    padding: 10px;
+}
+.submitbtn{
+    background-color: #212529;
+    color: white;
+    margin-top: 7px;
+    border-radius: 5px;
+}
+.inputblock{
+    border-radius: 5px;
+    padding-left: 10px;
+}
+.navcont{
+    height: 2px;
+    background-color: #586d83;
+}

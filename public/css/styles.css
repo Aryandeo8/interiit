@@ -1,0 +1,57 @@
+body{
+    background-color: rgb(82, 82, 238);
+    text-align: center;
+}
+.welcomeholder{
+    text-align: center;
+}
+
+.profile {
+    width: 100%;
+    height: 150px;
+}
+
+.profile img {
+    width: 50px;
+    margin: auto;
+    display: block;
+    position: relative;
+    top:100px;
+    animation: rotation 6s infinite linear;
+}
+@keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+}
+.name{
+    position: relative;
+    top: 100px;
+    color: aqua;
+}
+.loginbtn{
+    background-color: rgb(82, 82, 238);
+    width: max-content;
+    border-radius: 5px;
+    position: relative;
+    top: 200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.oholder{
+    position: absolute;
+    top: 50px;
+    width: 100%;
+}
+.body{
+    background-color: rgb(82, 82, 238);
+
+}
+.placem{
+    width: 500px;
+    display: table;
+    margin: 0 auto;
+}

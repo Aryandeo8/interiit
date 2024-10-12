@@ -64,7 +64,7 @@ passport.use(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "${port}/auth/google/option",
+        callbackURL: "https://interiit-cwy6.onrender.com/auth/google/option",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
       },
       async (accessToken, refreshToken, profile, cb) => {

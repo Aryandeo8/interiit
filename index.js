@@ -7,7 +7,7 @@ import session from "express-session";
 import env from "dotenv";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 env.config();
 app.use(
     session({
@@ -31,10 +31,10 @@ const db = new pg.Client({
   });
 db.connect();
 
-app.get("/", (req, res) => {
+app.get("https://turmino.onrender.com/", (req, res) => {
   res.render("index.ejs");
 });
-app.get("/option", (req, res) => {
+app.get("https://turmino.onrender.com/option", (req, res) => {
     if (req.isAuthenticated()) {
       res.render("option.ejs");
     } else {
@@ -42,20 +42,20 @@ app.get("/option", (req, res) => {
     }
 });
 app.get(
-    "/auth/google",
+    "https://turmino.onrender.com/auth/google",
     passport.authenticate("google", {
       scope: ["profile","email"],
     })
 );
 
 app.get(
-    "/auth/google/option",
+    "https://turmino.onrender.com/auth/google/option",
     passport.authenticate("google", {
       successRedirect: "/option",
       failureRedirect: "/",
     })
 );
-app.get("/portal", (req, res) => {
+app.get("https://turmino.onrender.com/portal", (req, res) => {
     res.render("portal.ejs");
 });
 passport.use(
@@ -64,7 +64,7 @@ passport.use(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/google/option",
+        callbackURL: "https://turmino.onrender.com/auth/google/option",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
       },
       async (accessToken, refreshToken, profile, cb) => {

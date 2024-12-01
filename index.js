@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import pg from "pg";
+import { MongoClient, ObjectId } from "mongodb";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth2";
 import session from "express-session";
@@ -9,12 +9,13 @@ import env from "dotenv";
 const app = express();
 const port = 3000;
 env.config();
+
 app.use(
-    session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: true,
-    })
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
 );
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,78 +23,101 @@ app.use(express.static("public"));
 app.use(passport.initialize());
 app.use(passport.session());
 
-const db = new pg.Client({
-    user: process.env.PG_USER,
-    host: process.env.PG_HOST,
-    database: process.env.PG_DATABASE,
-    password: process.env.PG_PASSWORD,
-    port: process.env.PG_PORT,
-  });
-db.connect();
+let db; // Declare the `db` variable globally
 
+// Connect to MongoDB
+MongoClient.connect(process.env.MONGO_URI, { useUnifiedTopology: true })
+  .then((client) => {
+    db = client.db(process.env.MONGO_DB_NAME); // Initialize `db`
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB:", err.message);
+    console.error("Error Details:", err);
+  });
+
+// Routes
 app.get("/", (req, res) => {
   res.render("index.ejs");
 });
+
 app.get("/option", (req, res) => {
-    if (req.isAuthenticated()) {
-      res.render("option.ejs");
-    } else {
-      res.redirect("/");
-    }
+  if (req.isAuthenticated()) {
+    res.render("option.ejs");
+  } else {
+    res.redirect("/");
+  }
 });
+
 app.get(
-    "/auth/google",
-    passport.authenticate("google", {
-      scope: ["profile","email"],
-    })
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
 );
 
 app.get(
-    "/auth/google/option",
-    passport.authenticate("google", {
-      successRedirect: "/option",
-      failureRedirect: "/",
-    })
+  "/auth/google/option",
+  passport.authenticate("google", {
+    successRedirect: "/option",
+    failureRedirect: "/",
+  })
 );
+
 app.get("/portal", (req, res) => {
-    res.render("portal.ejs");
+  res.render("portal.ejs");
 });
+
+// Google OAuth2 Strategy
 passport.use(
-    "google",
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://interiit-cwy6.onrender.com/auth/google/option",
-        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-      },
-      async (accessToken, refreshToken, profile, cb) => {
-        try {
-          console.log(profile);
-          const result = await db.query("SELECT * FROM users WHERE email = $1", [
-            profile.email,
-          ]);
-          if (result.rows.length === 0) {
-            const newUser = await db.query(
-              "INSERT INTO users (email, password) VALUES ($1, $2)",
-              [profile.email, "google"]
-            );
-            return cb(null, newUser.rows[0]);
-          } else {
-            return cb(null, result.rows[0]);
-          }
-        } catch (err) {
-          return cb(err);
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/option",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        console.log(profile);
+
+        // Check if user exists in MongoDB
+        const userCollection = db.collection("users");
+        const existingUser = await userCollection.findOne({ email: profile.email });
+
+        if (!existingUser) {
+          // Insert new user
+          const newUser = {
+            email: profile.email,
+            password: "google", // Placeholder password for Google-authenticated users
+          };
+          await userCollection.insertOne(newUser);
+          return cb(null, newUser);
+        } else {
+          return cb(null, existingUser);
         }
+      } catch (err) {
+        return cb(err);
       }
-    )
+    }
+  )
 );
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
-passport.deserializeUser((user, cb) => {
-    cb(null, user);
-});
+
+// Passport Serialize/Deserialize
 passport.serializeUser((user, cb) => {
+  cb(null, user._id);
+});
+
+passport.deserializeUser(async (id, cb) => {
+  try {
+    const user = await db.collection("users").findOne({ _id: new ObjectId(id) });
     cb(null, user);
+  } catch (err) {
+    cb(err);
+  }
+});
+
+// Start Server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });

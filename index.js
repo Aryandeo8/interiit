@@ -23,12 +23,11 @@ app.use(express.static("public"));
 app.use(passport.initialize());
 app.use(passport.session());
 
-let db; // Declare the `db` variable globally
+let db;
 
-// Connect to MongoDB
 MongoClient.connect(process.env.MONGO_URI, { useUnifiedTopology: true })
   .then((client) => {
-    db = client.db(process.env.MONGO_DB_NAME); // Initialize `db`
+    db = client.db(process.env.MONGO_DB_NAME); 
     console.log("Connected to MongoDB");
   })
   .catch((err) => {
@@ -36,7 +35,6 @@ MongoClient.connect(process.env.MONGO_URI, { useUnifiedTopology: true })
     console.error("Error Details:", err);
   });
 
-// Routes
 app.get("/", (req, res) => {
   res.render("index.ejs");
 });
@@ -68,7 +66,6 @@ app.get("/portal", (req, res) => {
   res.render("portal.ejs");
 });
 
-// Google OAuth2 Strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -81,15 +78,15 @@ passport.use(
       try {
         console.log(profile);
 
-        // Check if user exists in MongoDB
+        
         const userCollection = db.collection("users");
         const existingUser = await userCollection.findOne({ email: profile.email });
 
         if (!existingUser) {
-          // Insert new user
+         
           const newUser = {
             email: profile.email,
-            password: "google", // Placeholder password for Google-authenticated users
+            password: "google", 
           };
           await userCollection.insertOne(newUser);
           return cb(null, newUser);
@@ -103,7 +100,6 @@ passport.use(
   )
 );
 
-// Passport Serialize/Deserialize
 passport.serializeUser((user, cb) => {
   cb(null, user._id);
 });
@@ -117,7 +113,6 @@ passport.deserializeUser(async (id, cb) => {
   }
 });
 
-// Start Server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

@@ -7,7 +7,7 @@ import session from "express-session";
 import env from "dotenv";
 
 const app = express();
-const port = 3000;
+const port = 5000;
 env.config();
 
 app.use(
@@ -66,6 +66,13 @@ app.get("/portal", (req, res) => {
   res.render("portal.ejs");
 });
 
+app.get("/guide", (req, res) => {
+  res.render("guide.ejs");
+});
+
+app.get("/mentor", (req, res) => {
+  res.render("mentor.ejs");
+});
 passport.use(
   new GoogleStrategy(
     {

@@ -1,0 +1,32 @@
+body{
+    background-color: #212529;
+}
+.kero{
+    color: white;
+}
+.memo{
+    margin: 100px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.099);
+    padding: 20px 20px 20px 20px;
+    border-radius: 10px;
+}
+.pf{
+    margin: 20px 20px 10px 0px;
+    display: flex;
+    border-radius: 5%;
+    border: solid;
+    border-color: rgb(255, 255, 255);
+    border-radius: 50px;
+}
+.sec{
+    color: aliceblue;
+    border: solid;
+    border-radius: 50px;
+    border-color:black ;
+    padding: 5px 5px 5px 5px;
+}
+.sec:active {
+    transform: scale(0.98);
+    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+}

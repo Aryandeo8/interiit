@@ -1,13 +1,22 @@
 body{
     background-color: #212529;
 }
+.projectitem{
+    margin-top: 10px;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+img{
+    border:solid;
+    border-radius: 5%;
+}
 .kero{
     color: white;
 }
 .memo{
     margin: 100px;
     color: white;
-    background-color: rgba(255, 255, 255, 0.099);
+    background-color: rgba(227, 220, 220, 0.099);
     padding: 20px 20px 20px 20px;
     border-radius: 10px;
 }
@@ -29,4 +38,9 @@ body{
 .sec:active {
     transform: scale(0.98);
     box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+}
+.teamcard{
+    margin-top: 10px;
+    margin-left: 20%;
+    margin-right: 20%;
 }
